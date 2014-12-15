@@ -1,7 +1,9 @@
 package util;
 
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 
 import org.junit.runner.RunWith;
 
@@ -12,7 +14,7 @@ import static com.insightfullogic.lambdabehave.generators.Generator.asciiStrings
 
 @RunWith(JunitSuiteRunner.class)
 public class TestTempDirectorySpec {{
-    describe("temp directory", it -> {
+    describe("test temp directory tool", it -> {
         it.isConcludedWith(TestTempDirectory::cleanup);
         it.should("create a dir on FS", expect -> {
             TestTempDirectory.newOne();
@@ -44,8 +46,7 @@ public class TestTempDirectorySpec {{
                    asciiStrings())
           .toShow("create file in nested dir", (expect, dirName, fileName, content) -> {
               TestTempDirectory.newOne();
-              Path subDir = TestTempDirectory.createDir(dirName);
-              TestTempDirectory.pushDir(dirName);
+              Path subDir = TestTempDirectory.pushDir(dirName);
               Path file = TestTempDirectory.createFile(fileName, content);
 
               expect.that(TestTempDirectory.getCurrentDir())
@@ -57,5 +58,15 @@ public class TestTempDirectorySpec {{
               expect.that(Files.readAllBytes(file))
                     .isEqualTo(content.getBytes("UTF-8"));
           });
+
+
+        it.should("be able to bring a resource to FS", expect -> {
+            TestTempDirectory.newOne();
+            URL resource = getClass().getResource("test.txt");
+            Path tempFile = TestTempDirectory.bringResource(resource);
+
+            expect.that(Files.readAllLines(tempFile))
+                  .isEqualTo(Collections.singletonList("Karamba!"));
+        });
     });
 }}

@@ -13,7 +13,7 @@ public class FileNamePredicate implements Predicate<String> {
 
     @Override
     public boolean test(String s) {
-        if (s.isEmpty()) {
+        if (s.isEmpty() || s.equals(".") || s.equals("..")) {
             return false;
         }
 
