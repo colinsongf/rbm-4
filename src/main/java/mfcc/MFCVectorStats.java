@@ -17,12 +17,13 @@ public class MFCVectorStats implements MFCVectorVisitor {
     public double []counts;
 
     @Override
-    public void count(int n) {
-        sums = new double[MFC.N_COEFFICIENTS];
-        squareSums = new double[MFC.N_COEFFICIENTS];
-        min = new double[MFC.N_COEFFICIENTS];
-        max = new double[MFC.N_COEFFICIENTS];
-        counts = new double[MFC.N_COEFFICIENTS];
+    public void count(int nSamples, int samplePeriod, short sampleSize, short sampleKind) {
+        int n = sampleSize / 4;
+        sums = new double[n];
+        squareSums = new double[n];
+        min = new double[n];
+        max = new double[n];
+        counts = new double[n];
 
         Arrays.fill(min, Float.MAX_VALUE);
         Arrays.fill(max, Float.MIN_VALUE);
@@ -30,7 +31,7 @@ public class MFCVectorStats implements MFCVectorVisitor {
 
     @Override
     public void coefficients(float[] vector) {
-        for (int i = 0; i < MFC.N_COEFFICIENTS; i++) {
+        for (int i = 0; i < vector.length; i++) {
             float val = vector[i];
 
             if (Float.isNaN(val) || Float.isInfinite(val)) {

@@ -11,6 +11,8 @@ import util.TestTempDirectory;
 
 import static com.insightfullogic.lambdabehave.Suite.describe;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyShort;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -32,14 +34,14 @@ public class MFCReaderSpec {{
             new MFCReader(vectorVisitor).read(path);
 
             verify(vectorVisitor, times(1))
-                    .count(eq(189));
+                    .count(eq(189), anyInt(), anyShort(), anyShort());
 
 
             verify(vectorVisitor, times(189))
                     .coefficients(any(float[].class));
 
             verify(vectorVisitor, times(1))
-                    .theEnd();
+                    .theEnd(anyShort());
 
             verifyNoMoreInteractions(vectorVisitor);
         });

@@ -2,12 +2,16 @@ package mfcc;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class MFCReader {
-    public static final int SKIP_BYTES_AFTER_COUNT = 10;
     private MFCVectorVisitor vectorVisitor;
+
+    private byte[] bytes;
+    private ByteBuffer buf;
 
     public MFCReader(MFCVectorVisitor vectorVisitor) {
         this.vectorVisitor = vectorVisitor;
@@ -15,24 +19,37 @@ public class MFCReader {
 
     public void read(Path path) throws IOException {
         DataInputStream in = new DataInputStream(Files.newInputStream(path));
-        int cnt = in.readInt();
-        in.skipBytes(SKIP_BYTES_AFTER_COUNT);
+        int nSamples = in.readInt();
+        int samplePeriod = in.readInt();
+        short sampleSize = in.readShort();
+        short sampleKind = in.readShort();
 
-        vectorVisitor.count(cnt);
+        vectorVisitor.count(nSamples, samplePeriod, sampleSize, sampleKind);
 
-        float []coefficients = new float[MFC.N_COEFFICIENTS];
-        for (int i = 0; i < cnt; i++) {
+        bytes = new byte[sampleSize];
+        buf = ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN);
+
+        float []coefficients = new float[sampleSize / 4];
+        for (int i = 0; i < nSamples; i++) {
             readThemAll(in, coefficients);
             vectorVisitor.coefficients(coefficients);
         }
 
-        vectorVisitor.theEnd();
+        short checksum = in.readShort();
+        vectorVisitor.theEnd(checksum);
+
+        bytes = null;
+        buf = null;
     }
 
     private void readThemAll(DataInputStream in, float[] coefficients)
             throws IOException {
+
+        in.readFully(bytes);
+        buf.rewind();
+
         for (int j = 0; j < coefficients.length; j++) {
-            coefficients[j] = in.readFloat();
+            coefficients[j] = buf.getFloat();
         }
     }
 
