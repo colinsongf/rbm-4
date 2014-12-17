@@ -29,9 +29,9 @@ public class MFCReaderSpec {{
         it.isConcludedWith(TestTempDirectory::cleanup);
 
         it.should("read some amount of coefficient from file", expect -> {
-            MFCVectorVisitor vectorVisitor = mock(MFCVectorVisitor.class);
+            CoeffVisitor vectorVisitor = mock(CoeffVisitor.class);
             Path path = TestTempDirectory.bringResource(testMFC);
-            new CoeffReader(vectorVisitor).read(path);
+            new MFCIn(vectorVisitor).read(path);
 
             verify(vectorVisitor, times(1))
                     .count(eq(189), anyInt(), anyShort(), anyShort());

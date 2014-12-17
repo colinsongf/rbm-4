@@ -44,4 +44,21 @@ public class Vectors {
         return ret;
     }
 
+    public static double[] cast(float[] vector) {
+        int len = vector.length;
+        double []ret = new double[len];
+        for (int i = 0; i < len; i++) {
+            ret[i] = vector[i];
+        }
+        return ret;
+    }
+
+    public static float[] uncast(double[] vector) {
+        int len = vector.length;
+        float []ret = new float[len];
+        for (int i = 0; i < len; i++) {
+            ret[i] = (float) vector[i];
+        }
+        return ret;
+    }
 }

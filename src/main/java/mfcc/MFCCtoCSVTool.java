@@ -1,8 +1,12 @@
 package mfcc;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 
 import mfcc.MFCCWalker.FileVisitor;
 
@@ -13,14 +17,20 @@ public class MFCCtoCSVTool {
             System.out.println("");
         }
         try {
-            Path path = FileSystems.getDefault().getPath(args[0]);
+            FileSystem fs = FileSystems.getDefault();
+            Path path = fs.getPath(args[0]);
             new MFCCWalker(new FileVisitor() {
                 @Override public void visit(Path mfcc, Path csv) {
-                    System.out.println(mfcc);
+                    if (Files.exists(csv) && checkRewrite(mfcc, csv)) {
+                        return;
+                    }
+                    System.out.print('.');
                     CoeffStats stats = new CoeffStats();
-                    try {
-                        new CoeffReader(stats).read(mfcc);
-                        stats.output(System.out);
+                    try(PrintWriter writer = new PrintWriter(csv.toFile())) {
+                        new MFCIn(stats).read(mfcc);
+                        CSVOut csvOut = new CSVOut(writer);
+                        Norm normedCsvOut = new Norm(stats, csvOut);
+                        new MFCIn(normedCsvOut).read(mfcc);
                     } catch (IOException e) {
                         System.err.println("problem with " + mfcc + " : " + e);
                         e.printStackTrace();
@@ -30,5 +40,17 @@ public class MFCCtoCSVTool {
         } catch(IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private static boolean checkRewrite(Path mfcc, Path csv) {
+        try {
+            FileTime csvTime = Files.getLastModifiedTime(csv);
+            FileTime mfccTime = Files.getLastModifiedTime(mfcc);
+            if (csvTime.compareTo(mfccTime) < 0 || Files.size(csv) == 0) {
+                return true;
+            }
+        } catch (IOException e) {
+        }
+        return false;
     }
 }

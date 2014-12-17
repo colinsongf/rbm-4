@@ -25,8 +25,8 @@ public class MFCCWalker {
                 String filename = file.getFileName().toString();
                 if (filename.endsWith(".mfcc") || filename.endsWith(".mfc")) {
                     Path parent = file.getParent();
-                    String newName = filename.replaceFirst(".mfcc?^", ".csv");
-                    Path newFile = parent.resolve(".csv");
+                    String newName = filename.replaceFirst("\\.mfcc?$", ".csv");
+                    Path newFile = parent.resolve(newName);
                     visitor.visit(file, newFile);
                 }
                 return FileVisitResult.CONTINUE;

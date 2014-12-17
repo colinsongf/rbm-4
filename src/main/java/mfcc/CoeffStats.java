@@ -9,7 +9,7 @@ import static util.Vectors.divide;
 import static util.Vectors.square;
 import static util.Vectors.subtract;
 
-public class CoeffStats implements MFCVectorVisitor {
+public class CoeffStats implements CoeffVisitor {
     private double []sums;
     private double []squareSums;
     private double []min;

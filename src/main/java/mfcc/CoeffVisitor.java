@@ -1,6 +1,6 @@
 package mfcc;
 
-public interface MFCVectorVisitor {
+public interface CoeffVisitor {
     default void count(int nSamples, int samplePeriod, short sampleSize, short sampleKind) {
     }
 
