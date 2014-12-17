@@ -17,9 +17,9 @@ public class MFCCtoCSVTool {
             new MFCCWalker(new FileVisitor() {
                 @Override public void visit(Path mfcc, Path csv) {
                     System.out.println(mfcc);
-                    MFCVectorStats stats = new MFCVectorStats();
+                    CoeffStats stats = new CoeffStats();
                     try {
-                        new MFCReader(stats).read(mfcc);
+                        new CoeffReader(stats).read(mfcc);
                         stats.output(System.out);
                     } catch (IOException e) {
                         System.err.println("problem with " + mfcc + " : " + e);

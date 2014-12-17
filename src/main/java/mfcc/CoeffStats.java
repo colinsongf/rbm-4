@@ -9,12 +9,12 @@ import static util.Vectors.divide;
 import static util.Vectors.square;
 import static util.Vectors.subtract;
 
-public class MFCVectorStats implements MFCVectorVisitor {
-    public double []sums;
-    public double []squareSums;
-    public double []min;
-    public double []max;
-    public double []counts;
+public class CoeffStats implements MFCVectorVisitor {
+    private double []sums;
+    private double []squareSums;
+    private double []min;
+    private double []max;
+    private double []counts;
 
     @Override
     public void count(int nSamples, int samplePeriod, short sampleSize, short sampleKind) {
@@ -48,21 +48,47 @@ public class MFCVectorStats implements MFCVectorVisitor {
     }
 
     public void output(PrintStream out) {
-        System.out.println("Count: " + Arrays.toString(counts));
-        System.out.println("Sums: " + Arrays.toString(sums));
-        System.out.println("Square sums: " + Arrays.toString(squareSums));
+        out.println("Count: " + Arrays.toString(counts));
+        out.println("Sums: " + Arrays.toString(sums));
+        out.println("Square sums: " + Arrays.toString(squareSums));
 
-        System.out.println("Min: " + Arrays.toString(min));
-        System.out.println("Max: " + Arrays.toString(max));
+        out.println("Min: " + Arrays.toString(min));
+        out.println("Max: " + Arrays.toString(max));
 
-        double[] mean = divide(sums, counts);
+        out.println("Mean: " + Arrays.toString(getMean()));
+        out.println("Deviation: " + Arrays.toString(getDeviation()));
+    }
+
+    public double[] getMean() {
+        return divide(sums, counts);
+    }
+
+    public double[] getDeviation() {
+        double []mean = getMean();
         double[] meanSquare = square(mean);
         double[] squareMean = divide(squareSums, counts);
         double[] deviationSquare = subtract(squareMean, meanSquare);
-        double[] deviation = Vectors.sqaureRoot(deviationSquare);
-
-        System.out.println("Mean: " + Arrays.toString(mean));
-        System.out.println("Deviation: " + Arrays.toString(deviation));
+        return Vectors.sqaureRoot(deviationSquare);
     }
 
+
+    public double[] getSums() {
+        return sums;
+    }
+
+    public double[] getSquareSums() {
+        return squareSums;
+    }
+
+    public double[] getMin() {
+        return min;
+    }
+
+    public double[] getMax() {
+        return max;
+    }
+
+    public double[] getCounts() {
+        return counts;
+    }
 }

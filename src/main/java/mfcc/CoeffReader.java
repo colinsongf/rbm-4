@@ -7,13 +7,13 @@ import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class MFCReader {
+public class CoeffReader {
     private MFCVectorVisitor vectorVisitor;
 
     private byte[] bytes;
     private ByteBuffer buf;
 
-    public MFCReader(MFCVectorVisitor vectorVisitor) {
+    public CoeffReader(MFCVectorVisitor vectorVisitor) {
         this.vectorVisitor = vectorVisitor;
     }
 
