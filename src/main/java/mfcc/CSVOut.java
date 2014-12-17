@@ -24,6 +24,6 @@ public class CSVOut implements CoeffVisitor {
 
     @Override
     public void theEnd(short checksum) {
-        writer.flush();
+        writer.close();
     }
 }
